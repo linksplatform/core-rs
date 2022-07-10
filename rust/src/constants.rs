@@ -110,7 +110,7 @@ impl<T: LinkType> LinksConstants<T> {
             .map_or(false, |range| range.contains(&address))
     }
 
-    fn is_reference(&self, address: T) -> bool {
+    pub fn is_reference(&self, address: T) -> bool {
         self.is_internal(address) || self.is_external(address)
     }
 }

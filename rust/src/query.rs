@@ -1,5 +1,4 @@
-use platform_num::LinkType;
-use std::borrow::{Borrow, Cow};
+use std::borrow::Cow;
 use std::ops::Index;
 use std::slice::SliceIndex;
 
@@ -80,10 +79,7 @@ impl<T: Clone, const L: usize> ToQuery<T> for [T; L] {
 
 #[macro_export]
 macro_rules! query {
-    () => (
-        $crate::Query::new(&[][..])
-    );
     ($($x:expr),*) => (
-        $crate::Query::new(&[$($x),*][..])
+        $crate::ToQuery::to_query(&[$($x),*])
     );
 }

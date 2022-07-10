@@ -15,15 +15,15 @@ impl Try for Flow {
     type Output = ();
     type Residual = ();
 
+    fn from_output(_: Self::Output) -> Self {
+        Flow::Continue
+    }
+
     fn branch(self) -> ControlFlow<Self::Residual, Self::Output> {
         match self {
             Flow::Continue => ControlFlow::Continue(()),
             Flow::Break => ControlFlow::Break(()),
         }
-    }
-
-    fn from_output(output: Self::Output) -> Self {
-        Flow::Continue
     }
 }
 

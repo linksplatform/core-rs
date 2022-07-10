@@ -1,5 +1,4 @@
 use crate::{Flow, LinksConstants};
-use num_traits::zero;
 use platform_num::LinkType;
 use std::error::Error;
 

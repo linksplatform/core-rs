@@ -1,6 +1,6 @@
 [package]
 name = "platform-data"
-version = "0.1.0-aplha.1"
+version = "0.1.0-beta.1"
 edition = "2018"
 authors = ["uselesssgoddess", "Linksplatform Team <linksplatformtechnologies@gmail.com>"]
 license = "LGPL-3.0"
@@ -15,4 +15,4 @@ memmap2 = "0.5.0"
 tempfile = "3.2.0"
 num-traits = "0.2.14"
 
-platform-num = { version = "0.1.0-aplha.0" }
+platform-num = { version = "0.1.0-aplha.1" }
