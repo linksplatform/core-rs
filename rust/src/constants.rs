@@ -2,8 +2,7 @@ use std::default::default;
 use std::ops::RangeInclusive;
 
 use crate::Hybrid;
-use num_traits::{one, zero};
-use platform_num::LinkType;
+use crate::LinkType;
 
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub struct LinksConstants<T: LinkType> {
@@ -23,7 +22,7 @@ pub struct LinksConstants<T: LinkType> {
 
 impl<T: LinkType> LinksConstants<T> {
     fn default_target_part() -> T {
-        T::one() + one()
+        T::funty(2)
     }
 
     pub fn full_new(
@@ -31,26 +30,18 @@ impl<T: LinkType> LinksConstants<T> {
         internal: RangeInclusive<T>,
         external: Option<RangeInclusive<T>>,
     ) -> Self {
-        // TODO: refactor this
-        let one = one();
-        let two = one + one;
-        let three = two + one;
-        let four = three + one;
-        let five = four + one;
-        let six = five + one;
-
         Self {
-            index_part: zero(),
-            source_part: one,
+            index_part: T::funty(0),
+            source_part: T::funty(1),
             target_part,
             null: default(),
             r#continue: *internal.end(),
-            r#break: *internal.end() - one,
-            skip: *internal.end() - two,
-            any: *internal.end() - three,
-            itself: *internal.end() - four,
-            error: *internal.end() - five,
-            internal_range: *internal.start()..=*internal.end() - six,
+            r#break: *internal.end() - T::funty(1),
+            skip: *internal.end() - T::funty(2),
+            any: *internal.end() - T::funty(3),
+            itself: *internal.end() - T::funty(4),
+            error: *internal.end() - T::funty(5),
+            internal_range: *internal.start()..=*internal.end() - T::funty(6),
             external_range: external,
         }
     }
@@ -86,15 +77,15 @@ impl<T: LinkType> LinksConstants<T> {
 
     fn default_internal(external: bool) -> RangeInclusive<T> {
         if external {
-            one()..=Hybrid::half()
+            T::funty(1)..=Hybrid::half()
         } else {
-            one()..=T::MAX
+            T::funty(1)..=T::MAX
         }
     }
 
     fn default_external(external: bool) -> Option<RangeInclusive<T>> {
         if external {
-            Some(Hybrid::external_zero()..=T::MAX)
+            Some(Hybrid::half()..=T::MAX)
         } else {
             None
         }

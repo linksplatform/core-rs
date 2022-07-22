@@ -13,7 +13,7 @@ impl FromResidual for Flow {
 
 impl Try for Flow {
     type Output = ();
-    type Residual = ();
+    type Residual = Flow;
 
     fn from_output(_: Self::Output) -> Self {
         Flow::Continue
@@ -22,7 +22,7 @@ impl Try for Flow {
     fn branch(self) -> ControlFlow<Self::Residual, Self::Output> {
         match self {
             Flow::Continue => ControlFlow::Continue(()),
-            Flow::Break => ControlFlow::Break(()),
+            Flow::Break => ControlFlow::Break(Flow::Break),
         }
     }
 }

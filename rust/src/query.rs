@@ -13,11 +13,12 @@ impl<'a, T: Clone> Query<'a, T> {
         Query(beef.into())
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
     pub fn len(&self) -> usize {
-        match self.0 {
-            Cow::Borrowed(beef) => beef.len(),
-            Cow::Owned(ref beef) => beef.len(),
-        }
+        self.0.len()
     }
 
     pub fn into_inner(self) -> Cow<'a, [T]> {
@@ -25,10 +26,7 @@ impl<'a, T: Clone> Query<'a, T> {
     }
 
     pub fn into_owned(self) -> Vec<T> {
-        match self.0 {
-            Cow::Borrowed(beef) => beef.to_owned(),
-            Cow::Owned(beef) => beef,
-        }
+        self.0.into_owned()
     }
 }
 
@@ -36,10 +34,7 @@ impl<'a, I: SliceIndex<[T]>, T: Clone> Index<I> for Query<'a, T> {
     type Output = I::Output;
 
     fn index(&self, index: I) -> &Self::Output {
-        match self.0 {
-            Cow::Borrowed(ref s) => &s[index],
-            Cow::Owned(ref s) => &s[index],
-        }
+        self.0.index(index)
     }
 }
 

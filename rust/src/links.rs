@@ -1,5 +1,4 @@
-use crate::{Flow, LinksConstants};
-use platform_num::LinkType;
+use crate::{Flow, LinkType, LinksConstants};
 use std::error::Error;
 
 pub type ReadHandler<'a, T> = &'a mut dyn FnMut(&[T]) -> Flow;

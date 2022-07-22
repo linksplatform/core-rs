@@ -1,6 +1,6 @@
 [package]
 name = "platform-data"
-version = "0.1.0-beta.1"
+version = "0.1.0-beta.2"
 edition = "2018"
 authors = ["uselesssgoddess", "Linksplatform Team <linksplatformtechnologies@gmail.com>"]
 license = "LGPL-3.0"
@@ -11,8 +11,8 @@ Data for linksplatform
 """
 
 [dependencies]
-memmap2 = "0.5.0"
-tempfile = "3.2.0"
-num-traits = "0.2.14"
+funty = "2.0.0"
 
-platform-num = { version = "0.1.0-aplha.1" }
+[dev-dependencies]
+quickcheck = "1.0.3"
+quickcheck_macros = "1.0.0"

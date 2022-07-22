@@ -1,5 +1,5 @@
 use crate::Hybrid;
-use platform_num::LinkType;
+use crate::LinkType;
 
 #[derive(Default)]
 pub struct AddrToRaw;
@@ -10,7 +10,7 @@ impl AddrToRaw {
     }
 
     pub fn convert<T: LinkType>(&self, source: T) -> T {
-        Hybrid::external(source).as_value()
+        Hybrid::new(source).as_inner()
     }
 }
 
@@ -23,6 +23,6 @@ impl RawToAddr {
     }
 
     pub fn convert<T: LinkType>(&self, source: T) -> T {
-        Hybrid::internal(source).absolute()
+        Hybrid::new(source).abs()
     }
 }
