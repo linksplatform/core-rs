@@ -1,16 +1,14 @@
 use crate::Hybrid;
 use crate::LinkType;
+use funty::Integral;
+use std::ops::Sub;
 
 #[derive(Default)]
 pub struct AddrToRaw;
 
 impl AddrToRaw {
-    pub fn new() -> Self {
-        Self
-    }
-
-    pub fn convert<T: LinkType>(&self, source: T) -> T {
-        Hybrid::new(source).as_inner()
+    pub const fn convert<T: LinkType + ~const Integral + ~const Sub>(&self, source: T) -> T {
+        Hybrid::external(source).as_inner()
     }
 }
 
@@ -18,11 +16,7 @@ impl AddrToRaw {
 pub struct RawToAddr;
 
 impl RawToAddr {
-    pub fn new() -> Self {
-        Self
-    }
-
-    pub fn convert<T: LinkType>(&self, source: T) -> T {
-        Hybrid::new(source).abs()
+    pub const fn convert<T: LinkType + ~const Integral + ~const Sub>(&self, source: T) -> T {
+        Hybrid::external(source).abs()
     }
 }

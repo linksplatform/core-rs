@@ -4,15 +4,15 @@ pub struct Point<T> {
 }
 
 impl<T: PartialEq + Clone> Point<T> {
-    pub fn new(index: T, size: usize) -> Self {
+    pub const fn new(index: T, size: usize) -> Self {
         Self { index, size }
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-    pub fn len(&self) -> usize {
+    pub const fn len(&self) -> usize {
         self.size
     }
 
@@ -38,7 +38,7 @@ impl<T: PartialEq + Clone> Point<T> {
         link.iter().skip(1).any(|b| b == a)
     }
 
-    pub fn get(&self, index: usize) -> Option<&T> {
+    pub const fn get(&self, index: usize) -> Option<&T> {
         if index < self.len() {
             Some(&self.index)
         } else {

@@ -3,5 +3,7 @@ use quickcheck_macros::quickcheck;
 
 #[quickcheck]
 fn basic(orig: usize) -> bool {
-    AddrToRaw.convert(RawToAddr.convert(orig)) == orig && Hybrid::new(orig).abs() == orig
+    const HYBR: Hybrid<usize> = Hybrid::<usize>::external(usize::MAX / 2 + 123);
+
+    RawToAddr.convert(AddrToRaw.convert(orig)) == orig && Hybrid::new(orig).abs() == orig
 }

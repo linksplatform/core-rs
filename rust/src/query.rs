@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::marker::Destruct;
 use std::ops::Index;
 use std::slice::SliceIndex;
 
@@ -13,15 +14,18 @@ impl<'a, T: Clone> Query<'a, T> {
         Query(beef.into())
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
 
-    pub fn len(&self) -> usize {
+    pub const fn len(&self) -> usize {
         self.0.len()
     }
 
-    pub fn into_inner(self) -> Cow<'a, [T]> {
+    pub const fn into_inner(self) -> Cow<'a, [T]>
+    where
+        Self: ~const Destruct,
+    {
         self.0
     }
 

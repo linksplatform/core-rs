@@ -1,5 +1,6 @@
 use crate::LinkType;
-use std::ops::Div;
+use funty::Integral;
+use std::ops::{Div, Sub};
 
 #[derive(Debug, Clone, Copy, Hash, PartialOrd, PartialEq, Ord, Eq)]
 pub struct Hybrid<T> {
@@ -7,7 +8,7 @@ pub struct Hybrid<T> {
 }
 
 impl<T: LinkType> Hybrid<T> {
-    pub fn new(value: T) -> Self {
+    pub const fn new(value: T) -> Self {
         Self::internal(value)
     }
 
@@ -18,37 +19,55 @@ impl<T: LinkType> Hybrid<T> {
         T::MAX / T::funty(2)
     }
 
-    pub fn external(value: T) -> Self {
+    pub(crate) const fn external(value: T) -> Self
+    where
+        T: ~const Integral + ~const Sub,
+    {
         Self {
             value: Self::extend_value(value),
         }
     }
 
-    pub fn internal(value: T) -> Self {
+    pub(crate) const fn internal(value: T) -> Self {
         Self { value }
     }
 
-    fn extend_value(value: T) -> T {
+    const fn extend_value(value: T) -> T
+    where
+        T: ~const Integral + ~const Sub,
+    {
         (T::MAX - value).wrapping_add(T::funty(1))
     }
 
-    pub fn is_zero(&self) -> bool {
-        self.value == T::default()
+    pub const fn is_zero(&self) -> bool
+    where
+        T: ~const Default + ~const PartialEq,
+    {
+        self.value == T::funty(0)
     }
 
-    pub fn is_internal(&self) -> bool {
+    pub const fn is_internal(&self) -> bool
+    where
+        T: ~const Div + ~const PartialOrd,
+    {
         self.value < Self::half() // || self.value == T::default()
     }
 
-    pub fn is_external(&self) -> bool {
-        !self.is_internal() || self.value == T::default()
+    pub const fn is_external(&self) -> bool
+    where
+        T: ~const Div + ~const PartialOrd + ~const PartialEq,
+    {
+        !self.is_internal() || self.value == T::funty(0)
     }
 
-    pub fn abs(&self) -> T {
+    pub const fn abs(&self) -> T
+    where
+        T: ~const Integral,
+    {
         self.value.wrapping_add(T::funty(1)).wrapping_add(T::MAX)
     }
 
-    pub fn as_inner(&self) -> T {
+    pub const fn as_inner(&self) -> T {
         self.value
     }
 }
