@@ -13,7 +13,7 @@ impl<All: TryFrom<u8, Error = Infallible>> const FuntyPart for All {
     where
         All: ~const Destruct,
     {
-        // std Result::unwrap_unchecked is not const
+        // std `Result::unwrap_unchecked` is not const
         match All::try_from(n) {
             Ok(all) => all,
             Err(_) => {
