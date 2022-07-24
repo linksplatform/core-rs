@@ -1,5 +1,3 @@
-#![feature(default_free_fn)]
-#![feature(associated_type_bounds)]
 #![feature(try_trait_v2)]
 #![feature(type_alias_impl_trait)]
 #![feature(const_refs_to_cell)]

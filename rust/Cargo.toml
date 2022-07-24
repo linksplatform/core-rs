@@ -11,6 +11,7 @@ Data for linksplatform
 """
 
 [dependencies]
+beef = "~0.5"
 funty = "2.0.0"
 thiserror = "1.0.31"
 

@@ -1,5 +1,4 @@
-use crate::Hybrid;
-use crate::LinkType;
+use crate::{Hybrid, LinkType};
 use funty::Integral;
 use std::ops::Sub;
 

@@ -1,7 +1,5 @@
-use std::borrow::Cow;
-use std::marker::Destruct;
-use std::ops::Index;
-use std::slice::SliceIndex;
+use beef::lean::Cow;
+use std::{ops::Index, slice::SliceIndex};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Query<'a, T: Clone>(Cow<'a, [T]>);
@@ -14,18 +12,15 @@ impl<'a, T: Clone> Query<'a, T> {
         Query(beef.into())
     }
 
-    pub const fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
 
-    pub const fn len(&self) -> usize {
+    pub fn len(&self) -> usize {
         self.0.len()
     }
 
-    pub const fn into_inner(self) -> Cow<'a, [T]>
-    where
-        Self: ~const Destruct,
-    {
+    pub fn into_inner(self) -> Cow<'a, [T]> {
         self.0
     }
 
@@ -66,13 +61,13 @@ impl<'a, T: Clone> ToQuery<T> for &'a [T] {
 
 impl<T: Clone> ToQuery<T> for Vec<T> {
     fn to_query(&self) -> Query<'_, T> {
-        Query::new(&self[..])
+        Query::new(self.as_slice())
     }
 }
 
 impl<T: Clone, const L: usize> ToQuery<T> for [T; L] {
     fn to_query(&self) -> Query<'_, T> {
-        Query::new(&self[..])
+        Query::new(self.as_slice())
     }
 }
 

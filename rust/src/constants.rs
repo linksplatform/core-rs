@@ -1,8 +1,6 @@
-use std::default::default;
 use std::ops::RangeInclusive;
 
-use crate::Hybrid;
-use crate::LinkType;
+use crate::{Hybrid, LinkType};
 
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub struct LinksConstants<T: LinkType> {
@@ -34,7 +32,7 @@ impl<T: LinkType> LinksConstants<T> {
             index_part: T::funty(0),
             source_part: T::funty(1),
             target_part,
-            null: default(),
+            null: T::funty(0),
             r#continue: *internal.end(),
             r#break: *internal.end() - T::funty(1),
             skip: *internal.end() - T::funty(2),

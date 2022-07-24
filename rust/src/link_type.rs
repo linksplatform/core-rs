@@ -1,7 +1,9 @@
 use funty::Unsigned;
-use std::convert::{Infallible, TryFrom};
-use std::hint;
-use std::marker::Destruct;
+use std::{
+    convert::{Infallible, TryFrom},
+    hint,
+    marker::Destruct,
+};
 
 pub trait FuntyPart: Sized + TryFrom<u8> {
     fn funty(n: u8) -> Self;

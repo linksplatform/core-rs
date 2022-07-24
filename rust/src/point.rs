@@ -3,7 +3,7 @@ pub struct Point<T> {
     size: usize,
 }
 
-impl<T: PartialEq + Clone> Point<T> {
+impl<T: PartialEq> Point<T> {
     pub const fn new(index: T, size: usize) -> Self {
         Self { index, size }
     }
