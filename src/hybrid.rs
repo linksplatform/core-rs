@@ -19,7 +19,7 @@ impl<T: LinkType> Hybrid<T> {
         T::MAX / T::funty(2)
     }
 
-    pub(crate) const fn external(value: T) -> Self
+    pub const fn external(value: T) -> Self
     where
         T: ~const Integral + ~const Sub,
     {
@@ -28,7 +28,7 @@ impl<T: LinkType> Hybrid<T> {
         }
     }
 
-    pub(crate) const fn internal(value: T) -> Self {
+    pub const fn internal(value: T) -> Self {
         Self { value }
     }
 

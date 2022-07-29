@@ -1,4 +1,5 @@
 #![feature(try_trait_v2)]
+#![feature(associated_type_bounds)]
 #![feature(type_alias_impl_trait)]
 #![feature(const_refs_to_cell)]
 #![feature(const_result_drop)]
@@ -6,6 +7,7 @@
 #![feature(const_convert)]
 #![feature(const_deref)]
 #![feature(backtrace)]
+#![feature(step_trait)]
 
 mod constants;
 mod converters;
