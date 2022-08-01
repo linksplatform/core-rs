@@ -36,7 +36,7 @@ pub trait Links<T: LinkType> {
     fn count_links(&self, query: &[T]) -> T;
 
     fn create_links(&mut self, query: &[T], handler: WriteHandler<T>)
-        -> Result<Flow, Error<'_, T>>;
+    -> Result<Flow, Error<'_, T>>;
 
     fn each_links(&self, query: &[T], handler: ReadHandler<T>) -> Result<Flow, Error<'_, T>>;
 
@@ -48,5 +48,5 @@ pub trait Links<T: LinkType> {
     ) -> Result<Flow, Error<'_, T>>;
 
     fn delete_links(&mut self, query: &[T], handler: WriteHandler<T>)
-        -> Result<Flow, Error<'_, T>>;
+    -> Result<Flow, Error<'_, T>>;
 }
