@@ -1,6 +1,6 @@
 use funty::Unsigned;
 use std::{
-    convert::{Infallible, TryFrom, TryInto},
+    convert::{TryFrom, TryInto},
     fmt::Debug,
     hint,
     iter::Step,
