@@ -16,11 +16,7 @@ pub enum Error<'a, T: LinkType> {
     LimitReached(T),
 
     #[error("unable to allocate memory for links storage: `{0}`")]
-    AllocFailed(
-        #[from]
-        #[backtrace]
-        io::Error,
-    ),
+    AllocFailed(#[from] io::Error),
 
     #[error("other internal error: `{0}`")]
     Other(#[from] Box<dyn error::Error + Sync + Send>),

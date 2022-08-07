@@ -6,7 +6,6 @@
 #![feature(const_trait_impl)]
 #![feature(const_convert)]
 #![feature(const_deref)]
-#![feature(backtrace)]
 #![feature(step_trait)]
 
 mod constants;
