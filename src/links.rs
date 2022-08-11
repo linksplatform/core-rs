@@ -31,18 +31,24 @@ pub trait Links<T: LinkType> {
 
     fn count_links(&self, query: &[T]) -> T;
 
-    fn create_links(&mut self, query: &[T], handler: WriteHandler<T>)
-    -> Result<Flow, Error<'_, T>>;
+    fn create_links(
+        &mut self,
+        query: &[T],
+        handler: WriteHandler<'_, T>,
+    ) -> Result<Flow, Error<'_, T>>;
 
-    fn each_links(&self, query: &[T], handler: ReadHandler<T>) -> Result<Flow, Error<'_, T>>;
+    fn each_links(&self, query: &[T], handler: ReadHandler<'_, T>) -> Result<Flow, Error<'_, T>>;
 
     fn update_links(
         &mut self,
         query: &[T],
         replacement: &[T],
-        handler: WriteHandler<T>,
+        handler: WriteHandler<'_, T>,
     ) -> Result<Flow, Error<'_, T>>;
 
-    fn delete_links(&mut self, query: &[T], handler: WriteHandler<T>)
-    -> Result<Flow, Error<'_, T>>;
+    fn delete_links(
+        &mut self,
+        query: &[T],
+        handler: WriteHandler<'_, T>,
+    ) -> Result<Flow, Error<'_, T>>;
 }
