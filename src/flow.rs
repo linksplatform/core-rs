@@ -1,6 +1,6 @@
 use std::ops::{ControlFlow, FromResidual, Try};
 
-#[repr(u8)]
+#[repr(usize)]
 pub enum Flow {
     Continue,
     Break,
