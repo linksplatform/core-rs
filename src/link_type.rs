@@ -5,7 +5,6 @@ use std::{
     hint,
     iter::Step,
     marker::Destruct,
-    ops::Sub,
 };
 
 pub trait FuntyPart: Sized + TryFrom<u8> {
@@ -59,21 +58,9 @@ pub trait LinkType:
     + TryInto<isize, Error: Debug>
     + TryInto<usize, Error: Debug>
 {
-    const ANY: Self;
-    const CONTINUE: Self;
-    const BREAK: Self;
-    const ERROR: Self;
-    const CONST_BOUND: Self;
 }
 
-macro_rules! skip_fmt {
-    ($($tt:tt)*) => {
-        $($tt)*
-    };
-}
-
-impl<All: Unsigned + FuntyPart + Step> const LinkType for All
-where
+impl<All: Unsigned + FuntyPart + Step> const LinkType for All where
     All: TryFrom<i8, Error: Debug>
         + TryFrom<u8, Error: Debug>
         + TryFrom<i16, Error: Debug>
@@ -97,15 +84,6 @@ where
         + TryInto<i128, Error: Debug>
         + TryInto<u128, Error: Debug>
         + TryInto<isize, Error: Debug>
-        + TryInto<usize, Error: Debug>,
-    Self: ~const Sub,
+        + TryInto<usize, Error: Debug>
 {
-    #[rustfmt::skip]
-    skip_fmt! {
-        const ANY: Self      = Self::MAX - Self::funty(1);
-        const CONTINUE: Self = Self::MAX - Self::funty(2);
-        const BREAK: Self    = Self::MAX - Self::funty(3);
-        const ERROR: Self    = Self::MAX - Self::funty(4);
-        const CONST_BOUND: Self = Self::ERROR;
-    }
 }
