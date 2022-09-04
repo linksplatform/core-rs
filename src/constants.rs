@@ -1,101 +1,87 @@
-use std::ops::RangeInclusive;
+use std::ops::{Range, Sub};
 
 use crate::{Hybrid, LinkType};
 
+macro_rules! const_fn {
+    (const $name:ident: $ty:ty = $expr:expr; where $($bound:tt)*) => {
+        const fn $name() -> $ty
+        where
+            $($bound)*
+        {
+            $expr
+        }
+    };
+}
+
 #[derive(Clone, Eq, PartialEq, Debug)]
-pub struct LinksConstants<T: LinkType> {
-    pub index_part: T,
-    pub source_part: T,
-    pub target_part: T,
-    pub null: T,
-    pub r#continue: T,
-    pub r#break: T,
-    pub skip: T,
+pub struct LinksConstants<T> {
     pub any: T,
-    pub itself: T,
+    pub r#break: T,
+    pub r#continue: T,
     pub error: T,
-    pub internal_range: RangeInclusive<T>,
-    pub external_range: Option<RangeInclusive<T>>,
+    pub internal: Range<T>,
+    pub external: Option<Range<T>>,
 }
 
 impl<T: LinkType> LinksConstants<T> {
-    fn default_target_part() -> T {
-        T::funty(2)
-    }
+    const ANY: T = T::ANY;
 
-    pub fn full_new(
-        target_part: T,
-        internal: RangeInclusive<T>,
-        external: Option<RangeInclusive<T>>,
-    ) -> Self {
+    pub unsafe fn _new(internal: Range<T>, external: Option<Range<T>>) -> Self {
         Self {
-            index_part: T::funty(0),
-            source_part: T::funty(1),
-            target_part,
-            null: T::funty(0),
-            r#continue: *internal.end(),
-            r#break: *internal.end() - T::funty(1),
-            skip: *internal.end() - T::funty(2),
-            any: *internal.end() - T::funty(3),
-            itself: *internal.end() - T::funty(4),
-            error: *internal.end() - T::funty(5),
-            internal_range: *internal.start()..=*internal.end() - T::funty(6),
-            external_range: external,
+            any: T::ANY,
+            r#break: T::BREAK,
+            r#continue: T::CONTINUE,
+            error: T::ERROR,
+            internal,
+            external,
         }
     }
 
     // TODO: enough for now
-    pub fn via_external(target_part: T, external: bool) -> Self {
-        Self::full_new(
-            target_part,
-            Self::default_internal(external),
-            Self::default_external(external),
-        )
-    }
-
-    pub fn via_ranges(internal: RangeInclusive<T>, external: Option<RangeInclusive<T>>) -> Self {
-        Self::full_new(Self::default_target_part(), internal, external)
-    }
-
-    pub fn via_only_external(external: bool) -> Self {
-        Self::via_external(Self::default_target_part(), external)
+    pub fn with_external(external: bool) -> Self {
+        unsafe {
+            Self::_new(
+                Self::default_internal(external),
+                Self::default_external(external),
+            )
+        }
     }
 
     pub fn external() -> Self {
-        Self::via_only_external(true)
+        Self::with_external(true)
     }
 
     pub fn internal() -> Self {
-        Self::via_only_external(false)
+        Self::with_external(false)
     }
 
     pub fn new() -> Self {
         Self::internal()
     }
 
-    fn default_internal(external: bool) -> RangeInclusive<T> {
+    fn default_internal(external: bool) -> Range<T> {
         if external {
-            T::funty(1)..=Hybrid::half()
+            T::funty(1)..Hybrid::half()
         } else {
-            T::funty(1)..=T::MAX
+            T::funty(1)..T::funty(223)
         }
     }
 
-    fn default_external(external: bool) -> Option<RangeInclusive<T>> {
+    fn default_external(external: bool) -> Option<Range<T>> {
         if external {
-            Some(Hybrid::half()..=T::MAX)
+            Some(Hybrid::half()..T::CONST_BOUND)
         } else {
             None
         }
     }
 
     pub fn is_internal(&self, address: T) -> bool {
-        self.internal_range.contains(&address)
+        self.internal.contains(&address)
     }
 
     pub fn is_external(&self, address: T) -> bool {
-        self.external_range
-            .clone()
+        self.external
+            .as_ref()
             .map_or(false, |range| range.contains(&address))
     }
 
