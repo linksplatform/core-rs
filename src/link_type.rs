@@ -7,12 +7,13 @@ use std::{
     marker::Destruct,
 };
 
+#[const_trait]
 pub trait FuntyPart: Sized + TryFrom<u8> {
     fn funty(n: u8) -> Self;
 }
 
 // TryFrom<u8> has `Error = Infallible` for all types
-impl<All: TryFrom<u8>> const FuntyPart for All {
+impl<All: ~const TryFrom<u8>> const FuntyPart for All {
     fn funty(n: u8) -> Self
     where
         All: ~const Destruct,
@@ -29,6 +30,8 @@ impl<All: TryFrom<u8>> const FuntyPart for All {
     }
 }
 
+// fixme: track https://github.com/rust-lang/rust/issues/67792
+#[const_trait]
 pub trait LinkType:
     Unsigned
     + FuntyPart
