@@ -1,14 +1,13 @@
 use crate::LinkType;
-use funty::Integral;
-use std::ops::{Div, Sub};
 
 #[derive(Debug, Clone, Copy, Hash, PartialOrd, PartialEq, Ord, Eq)]
+#[deprecated(note = "maybe deprecated")]
 pub struct Hybrid<T> {
     value: T,
 }
 
 impl<T: LinkType> Hybrid<T> {
-    pub fn new(value: T) -> Self {
+    pub const fn new(value: T) -> Self {
         Self::internal(value)
     }
 
@@ -22,7 +21,7 @@ impl<T: LinkType> Hybrid<T> {
         }
     }
 
-    pub fn internal(value: T) -> Self {
+    pub const fn internal(value: T) -> Self {
         Self { value }
     }
 

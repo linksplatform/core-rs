@@ -3,7 +3,6 @@ use std::{
     convert::{TryFrom, TryInto},
     fmt::Debug,
     hint,
-    iter::Step,
     marker::Destruct,
 };
 
@@ -35,7 +34,6 @@ impl<All: ~const TryFrom<u8>> const FuntyPart for All {
 pub trait LinkType:
     Unsigned
     + FuntyPart
-    + Step
     + TryFrom<i8, Error: Debug>
     + TryFrom<u8, Error: Debug>
     + TryFrom<i16, Error: Debug>
@@ -61,9 +59,11 @@ pub trait LinkType:
     + TryInto<isize, Error: Debug>
     + TryInto<usize, Error: Debug>
 {
+    const ANY: Self;
 }
 
-impl<All: Unsigned + FuntyPart + Step> const LinkType for All where
+impl<All: Unsigned + FuntyPart> const LinkType for All
+where
     All: TryFrom<i8, Error: Debug>
         + TryFrom<u8, Error: Debug>
         + TryFrom<i16, Error: Debug>
@@ -87,6 +87,7 @@ impl<All: Unsigned + FuntyPart + Step> const LinkType for All where
         + TryInto<i128, Error: Debug>
         + TryInto<u128, Error: Debug>
         + TryInto<isize, Error: Debug>
-        + TryInto<usize, Error: Debug>
+        + TryInto<usize, Error: Debug>,
 {
+    const ANY: Self = Self::MAX;
 }

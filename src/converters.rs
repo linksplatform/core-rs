@@ -1,8 +1,7 @@
 use crate::{Hybrid, LinkType};
-use funty::Integral;
-use std::ops::Sub;
 
 #[derive(Default)]
+#[deprecated(note = "maybe deprecated")]
 pub struct AddrToRaw;
 
 impl AddrToRaw {
@@ -12,6 +11,7 @@ impl AddrToRaw {
 }
 
 #[derive(Default)]
+#[deprecated(note = "maybe deprecated")]
 pub struct RawToAddr;
 
 impl RawToAddr {
