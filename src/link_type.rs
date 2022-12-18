@@ -6,9 +6,25 @@ use std::{
     marker::Destruct,
 };
 
+macro_rules! named {
+    ($($name:ident => $val:expr)*) => {
+        $(
+            fn $name() -> Self {
+                Self::funty($val)
+            }
+        )*
+    };
+}
+
 #[const_trait]
 pub trait FuntyPart: Sized + TryFrom<u8> {
     fn funty(n: u8) -> Self;
+
+    named! {
+        zero => 0
+        one => 1
+        two => 2
+    }
 }
 
 // TryFrom<u8> has `Error = Infallible` for all types
