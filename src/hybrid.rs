@@ -8,41 +8,62 @@ pub struct Hybrid<T> {
 }
 
 impl<T: LinkType> Hybrid<T> {
-    pub fn new(value: T) -> Self {
+    pub const fn new(value: T) -> Self {
         Self::internal(value)
     }
 
-    pub fn half() -> T {
+    pub const fn half() -> T
+        where
+            T: Div<Output = T>,
+    {
         T::MAX / T::funty(2)
     }
 
-    pub fn external(value: T) -> Self {
+    pub const fn external(value: T) -> Self
+        where
+            T: Integral + Sub,
+    {
         Self {
             value: Self::extend_value(value),
         }
     }
 
-    pub fn internal(value: T) -> Self {
+    pub const fn internal(value: T) -> Self {
         Self { value }
     }
 
-    fn extend_value(value: T) -> T {
+    const fn extend_value(value: T) -> T
+        where
+            T: Integral + Sub,
+    {
         (T::MAX - value).wrapping_add(T::funty(1))
     }
 
-    pub fn is_zero(&self) -> bool {
+    pub const fn is_zero(&self) -> bool
+        where
+            T: Default + PartialEq,
+    {
         self.value == T::funty(0)
     }
 
-    pub fn is_internal(&self) -> bool {
-        self.value < Self::half() // || self.value == T::default()
+    pub const fn is_internal(&self) -> bool
+        where
+            T: Div + PartialOrd,
+    {
+        self.value < Self::half()
     }
 
-    pub fn is_external(&self) -> bool {
+    pub const fn is_external(&self) -> bool
+        where
+            T: Div + PartialOrd + PartialEq,
+    {
         !self.is_internal() || self.value == T::funty(0)
     }
 
-    pub fn abs(&self) -> T {
+    pub const fn abs(&self) -> T
+        where
+            T: Integral,
+    {
         self.value.wrapping_add(T::funty(1)).wrapping_add(T::MAX)
     }
 
