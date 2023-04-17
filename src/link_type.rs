@@ -7,7 +7,6 @@ use std::{
     marker::Destruct,
 };
 
-#[const_trait]
 pub trait FuntyPart: Sized + TryFrom<u8> {
     fn funty(n: u8) -> Self;
 }
@@ -30,7 +29,6 @@ impl<All: TryFrom<u8>> const FuntyPart for All {
     }
 }
 
-#[const_trait]
 pub trait LinkType:
     Unsigned
     + FuntyPart
