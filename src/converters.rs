@@ -6,7 +6,7 @@ use std::ops::Sub;
 pub struct AddrToRaw;
 
 impl AddrToRaw {
-    pub const fn convert<T: LinkType + Integral + Sub>(&self, source: T) -> T {
+    pub fn convert<T: LinkType>(&self, source: T) -> T {
         Hybrid::external(source).as_inner()
     }
 }
@@ -15,7 +15,7 @@ impl AddrToRaw {
 pub struct RawToAddr;
 
 impl RawToAddr {
-    pub const fn convert<T: LinkType + Integral + Sub>(&self, source: T) -> T {
+    pub fn convert<T: LinkType>(&self, source: T) -> T {
         Hybrid::external(source).abs()
     }
 }
