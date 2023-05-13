@@ -6,12 +6,10 @@
 
 mod link;
 mod links;
-mod query;
 
 pub use {
     link::{Flow, Link},
     links::{Error, Links, ReadHandler, WriteHandler},
-    query::{Query, ToQuery},
 };
 
 use std::fmt;
