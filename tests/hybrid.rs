@@ -1,5 +1,7 @@
-use platform_data::{AddrToRaw, Hybrid, RawToAddr};
-use quickcheck_macros::quickcheck;
+use {
+    platform_data::{AddrToRaw, Hybrid, RawToAddr},
+    quickcheck_macros::quickcheck,
+};
 
 #[quickcheck]
 fn basic(orig: usize) -> bool {

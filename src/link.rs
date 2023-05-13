@@ -1,4 +1,14 @@
-use std::ops::{ControlFlow, FromResidual, Try};
+use {
+    crate::LinkType,
+    std::ops::{ControlFlow, FromResidual, Try},
+};
+
+#[repr(usize)]
+pub enum Link<T: LinkType> {
+    Any,
+    ItSelf,
+    Link(T),
+}
 
 #[repr(usize)]
 pub enum Flow {

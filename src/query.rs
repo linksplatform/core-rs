@@ -1,5 +1,7 @@
-use beef::lean::Cow;
-use std::{ops::Index, slice::SliceIndex};
+use {
+    beef::lean::Cow,
+    std::{ops::Index, slice::SliceIndex},
+};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Query<'a, T: Clone>(Cow<'a, [T]>);

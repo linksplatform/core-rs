@@ -1,27 +1,40 @@
 #![feature(try_trait_v2)]
 #![feature(associated_type_bounds)]
 #![feature(type_alias_impl_trait)]
-#![feature(const_refs_to_cell)]
-#![feature(const_result_drop)]
 #![feature(const_trait_impl)]
-#![feature(const_convert)]
-#![feature(const_deref)]
 #![feature(step_trait)]
 
-mod constants;
-mod converters;
-mod flow;
-mod hybrid;
-mod link_type;
+mod link;
 mod links;
-mod point;
 mod query;
 
-pub use constants::LinksConstants;
-pub use converters::{AddrToRaw, RawToAddr};
-pub use flow::Flow;
-pub use hybrid::Hybrid;
-pub use link_type::LinkType;
-pub use links::{Links, ReadHandler, WriteHandler, Error};
-pub use point::Point;
-pub use query::{Query, ToQuery};
+pub use {
+    link::{Flow, Link},
+    links::{Error, Links, ReadHandler, WriteHandler},
+    query::{Query, ToQuery},
+};
+
+use std::fmt;
+
+// fixme: track https://github.com/rust-lang/rust/issues/67792
+#[const_trait]
+pub unsafe trait LinkType: Copy + fmt::Debug {
+    fn from_addr(addr: usize) -> Self;
+    fn addr(self) -> usize;
+}
+
+macro_rules! link_type {
+    ($($ty:ty)*) => {$(
+        unsafe impl LinkType for $ty {
+            fn from_addr(addr: usize) -> Self {
+                addr as Self
+            }
+
+            fn addr(self) -> usize {
+                self as usize
+            }
+        }
+    )*};
+}
+
+link_type! { u8 u16 u32 u64 usize }
