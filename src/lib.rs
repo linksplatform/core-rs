@@ -9,14 +9,14 @@ mod links;
 
 pub use {
     link::{Flow, Link},
-    links::{Error, Links, ReadHandler, WriteHandler},
+    links::Error,
 };
 
 use std::fmt;
 
 // fixme: track https://github.com/rust-lang/rust/issues/67792
 #[const_trait]
-pub unsafe trait LinkType: Copy + fmt::Debug {
+pub unsafe trait LinkType: Copy + fmt::Debug + Sync + Send {
     fn from_addr(addr: usize) -> Self;
     fn addr(self) -> usize;
 }
