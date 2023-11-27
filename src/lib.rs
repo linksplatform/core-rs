@@ -1,8 +1,4 @@
 #![feature(try_trait_v2)]
-#![feature(associated_type_bounds)]
-#![feature(type_alias_impl_trait)]
-#![feature(const_trait_impl)]
-#![feature(step_trait)]
 
 mod link;
 mod links;
@@ -14,8 +10,6 @@ pub use {
 
 use std::fmt;
 
-// fixme: track https://github.com/rust-lang/rust/issues/67792
-#[const_trait]
 pub unsafe trait LinkType: Copy + fmt::Debug + Sync + Send {
     fn from_addr(addr: usize) -> Self;
     fn addr(self) -> usize;
@@ -24,10 +18,12 @@ pub unsafe trait LinkType: Copy + fmt::Debug + Sync + Send {
 macro_rules! link_type {
     ($($ty:ty)*) => {$(
         unsafe impl LinkType for $ty {
+            #[inline(always)]
             fn from_addr(addr: usize) -> Self {
                 addr as Self
             }
 
+            #[inline(always)]
             fn addr(self) -> usize {
                 self as usize
             }
