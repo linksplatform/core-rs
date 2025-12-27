@@ -1,6 +1,6 @@
 [![Crates.io](https://img.shields.io/crates/v/platform-data.svg?label=crates.io&style=flat)](https://crates.io/crates/platform-data)
 [![Docs.rs](https://docs.rs/platform-data/badge.svg)](https://docs.rs/platform-data)
-[![License](https://img.shields.io/crates/l/platform-data)](https://github.com/linksplatform/core-rs/blob/main/LICENSE)
+[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](https://github.com/linksplatform/core-rs/blob/main/LICENSE)
 
 # [Data](https://github.com/linksplatform/core-rs)
 
