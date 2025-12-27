@@ -1,3 +1,7 @@
+---
+bump: major
+---
+
 ### Changed
 - Migrated from nightly Rust to **stable Rust** toolchain (requires Rust 1.79+)
 - Removed all unstable feature flags:
