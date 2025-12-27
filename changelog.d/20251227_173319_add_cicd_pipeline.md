@@ -1,3 +1,7 @@
+---
+bump: minor
+---
+
 ### Added
 - Modern CI/CD pipeline from rust-ai-driven-development-pipeline-template
 - GitHub Actions workflow for automated testing, linting, and releases
