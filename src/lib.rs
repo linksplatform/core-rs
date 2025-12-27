@@ -22,6 +22,6 @@ pub use converters::{AddrToRaw, RawToAddr};
 pub use flow::Flow;
 pub use hybrid::Hybrid;
 pub use link_type::LinkType;
-pub use links::{Links, ReadHandler, WriteHandler, Error};
+pub use links::{Error, Links, ReadHandler, WriteHandler};
 pub use point::Point;
 pub use query::{Query, ToQuery};
