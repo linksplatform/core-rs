@@ -49,9 +49,9 @@ impl<T: PartialEq> Point<T> {
 
 impl<T: PartialEq + Copy> IntoIterator for Point<T> {
     type Item = T;
-    type IntoIter = impl Iterator<Item = T>;
+    type IntoIter = std::iter::RepeatN<T>;
 
     fn into_iter(self) -> Self::IntoIter {
-        (0..self.len()).map(move |_| self.index)
+        std::iter::repeat_n(self.index, self.size)
     }
 }

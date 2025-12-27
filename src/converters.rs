@@ -1,6 +1,4 @@
 use crate::{Hybrid, LinkType};
-use funty::Integral;
-use std::ops::Sub;
 
 #[derive(Default)]
 pub struct AddrToRaw;
