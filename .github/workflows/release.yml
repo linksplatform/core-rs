@@ -95,11 +95,52 @@ jobs:
       - name: Run doc tests
         run: cargo test --doc --verbose
 
-  # Build package - only runs if lint and test pass
+  # Test coverage - ensures we maintain high test coverage
+  coverage:
+    name: Test Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-coverage-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-coverage-
+
+      - name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
+
+      - name: Run coverage
+        run: cargo tarpaulin --out Xml --output-dir coverage
+
+      - name: Check coverage threshold
+        run: |
+          # Extract coverage percentage from output
+          COVERAGE=$(cargo tarpaulin --out Stdout 2>&1 | grep -oP '\d+\.\d+(?=% coverage)' | tail -1)
+          echo "Coverage: $COVERAGE%"
+
+          # Check if coverage meets threshold (90%)
+          if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+            echo "::error::Coverage ($COVERAGE%) is below 90% threshold"
+            exit 1
+          fi
+
+          echo "Coverage check passed: $COVERAGE% >= 90%"
+
+  # Build package - only runs if lint, test, and coverage pass
   build:
     name: Build Package
     runs-on: ubuntu-latest
-    needs: [lint, test]
+    needs: [lint, test, coverage]
     steps:
       - uses: actions/checkout@v4
 
