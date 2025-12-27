@@ -105,18 +105,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Install tarpaulin with stable Rust (it needs newer Rust to compile)
-      - name: Setup Rust stable for tarpaulin
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install cargo-tarpaulin
-        run: cargo install cargo-tarpaulin
-
-      # Now set up nightly-2022-08-22 for running coverage on our code
       - name: Setup Rust nightly
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly-2022-08-22
+
+      # Install tarpaulin using pre-built binary (avoids compilation issues)
+      - name: Install cargo-tarpaulin
+        run: |
+          curl -sL https://github.com/xd009642/tarpaulin/releases/download/0.31.5/cargo-tarpaulin-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          chmod +x cargo-tarpaulin
+          sudo mv cargo-tarpaulin /usr/local/bin/
 
       - name: Cache cargo registry
         uses: actions/cache@v4
@@ -130,12 +129,12 @@ jobs:
             ${{ runner.os }}-cargo-coverage-
 
       - name: Run coverage
-        run: cargo +nightly-2022-08-22 tarpaulin --out Xml --output-dir coverage
+        run: cargo-tarpaulin --out Xml --output-dir coverage
 
       - name: Check coverage threshold
         run: |
           # Extract coverage percentage from output
-          COVERAGE=$(cargo +nightly-2022-08-22 tarpaulin --out Stdout 2>&1 | grep -oP '\d+\.\d+(?=% coverage)' | tail -1)
+          COVERAGE=$(cargo-tarpaulin --out Stdout 2>&1 | grep -oP '\d+\.\d+(?=% coverage)' | tail -1)
           echo "Coverage: $COVERAGE%"
 
           # Check if coverage meets threshold (90%)
