@@ -1,4 +1,4 @@
-use std::ops::ControlFlow;
+use std::ops::{ControlFlow, FromResidual, Try};
 
 /// Represents the control flow of an operation, similar to `ControlFlow`.
 ///
@@ -20,6 +20,28 @@ impl Flow {
     /// Returns `true` if this is `Flow::Break`.
     pub fn is_break(&self) -> bool {
         matches!(self, Flow::Break)
+    }
+}
+
+impl FromResidual for Flow {
+    fn from_residual(_: <Self as Try>::Residual) -> Self {
+        Flow::Break
+    }
+}
+
+impl Try for Flow {
+    type Output = ();
+    type Residual = Flow;
+
+    fn from_output(_: Self::Output) -> Self {
+        Flow::Continue
+    }
+
+    fn branch(self) -> ControlFlow<Self::Residual, Self::Output> {
+        match self {
+            Flow::Continue => ControlFlow::Continue(()),
+            Flow::Break => ControlFlow::Break(Flow::Break),
+        }
     }
 }
 

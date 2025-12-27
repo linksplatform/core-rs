@@ -2,40 +2,40 @@ use funty::Unsigned;
 use std::{
     convert::{TryFrom, TryInto},
     fmt::Debug,
+    hint,
+    iter::Step,
+    marker::Destruct,
 };
 
-/// Helper trait for converting from small unsigned integers.
-///
-/// This trait provides a convenient way to convert `u8` values
-/// to any type that implements `TryFrom<u8>`.
+#[const_trait]
 pub trait FuntyPart: Sized + TryFrom<u8> {
-    /// Convert a `u8` value to `Self`.
-    ///
-    /// # Panics
-    ///
-    /// This should never panic for unsigned integer types as they all
-    /// implement `TryFrom<u8>` with `Error = Infallible`.
     fn funty(n: u8) -> Self;
 }
 
-// TryFrom<u8> has `Error = Infallible` for all unsigned integer types
-impl<T> FuntyPart for T
-where
-    T: TryFrom<u8>,
-    <T as TryFrom<u8>>::Error: Debug,
-{
-    fn funty(n: u8) -> Self {
-        T::try_from(n).expect("conversion from u8 should never fail for unsigned types")
+// TryFrom<u8> has `Error = Infallible` for all types
+impl<All: ~const TryFrom<u8>> const FuntyPart for All {
+    fn funty(n: u8) -> Self
+    where
+        All: ~const Destruct,
+        <All as TryFrom<u8>>::Error: ~const Destruct,
+    {
+        // std `Result::unwrap_unchecked` is not const
+        match All::try_from(n) {
+            Ok(all) => all,
+            Err(_) => {
+                // <All as TryFrom<u8>>::Error is Infallible
+                unsafe { hint::unreachable_unchecked() }
+            }
+        }
     }
 }
 
-/// Trait for types that can be used as link identifiers.
-///
-/// This trait bounds the type to be an unsigned integer with
-/// various conversion capabilities.
+// fixme: track https://github.com/rust-lang/rust/issues/67792
+#[const_trait]
 pub trait LinkType:
     Unsigned
     + FuntyPart
+    + Step
     + TryFrom<i8, Error: Debug>
     + TryFrom<u8, Error: Debug>
     + TryFrom<i16, Error: Debug>
@@ -63,10 +63,8 @@ pub trait LinkType:
 {
 }
 
-impl<T> LinkType for T where
-    T: Unsigned
-        + FuntyPart
-        + TryFrom<i8, Error: Debug>
+impl<All: Unsigned + FuntyPart + Step> const LinkType for All where
+    All: TryFrom<i8, Error: Debug>
         + TryFrom<u8, Error: Debug>
         + TryFrom<i16, Error: Debug>
         + TryFrom<u16, Error: Debug>
