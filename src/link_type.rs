@@ -2,40 +2,35 @@ use funty::Unsigned;
 use std::{
     convert::{TryFrom, TryInto},
     fmt::Debug,
-    hint,
-    iter::Step,
-    marker::Destruct,
 };
 
-#[const_trait]
+/// Trait for creating small numeric values from u8.
+///
+/// This trait provides a convenient way to create numeric types from small u8 values,
+/// which is commonly needed when working with link constants and indices.
 pub trait FuntyPart: Sized + TryFrom<u8> {
+    /// Create a value from a u8. Panics if the conversion fails.
     fn funty(n: u8) -> Self;
 }
 
-// TryFrom<u8> has `Error = Infallible` for all types
-impl<All: ~const TryFrom<u8>> const FuntyPart for All {
-    fn funty(n: u8) -> Self
-    where
-        All: ~const Destruct,
-        <All as TryFrom<u8>>::Error: ~const Destruct,
-    {
-        // std `Result::unwrap_unchecked` is not const
-        match All::try_from(n) {
-            Ok(all) => all,
-            Err(_) => {
-                // <All as TryFrom<u8>>::Error is Infallible
-                unsafe { hint::unreachable_unchecked() }
-            }
-        }
+impl<All: TryFrom<u8>> FuntyPart for All
+where
+    <All as TryFrom<u8>>::Error: Debug,
+{
+    fn funty(n: u8) -> Self {
+        All::try_from(n).expect("conversion from u8 should succeed for all unsigned types")
     }
 }
 
-// fixme: track https://github.com/rust-lang/rust/issues/67792
-#[const_trait]
+/// Trait bound for numeric types that can be used as link identifiers.
+///
+/// This trait combines several requirements:
+/// - Must be an unsigned integer type (via `Unsigned`)
+/// - Must support creation from small values (via `FuntyPart`)
+/// - Must support conversions to/from various integer types
 pub trait LinkType:
     Unsigned
     + FuntyPart
-    + Step
     + TryFrom<i8, Error: Debug>
     + TryFrom<u8, Error: Debug>
     + TryFrom<i16, Error: Debug>
@@ -63,7 +58,7 @@ pub trait LinkType:
 {
 }
 
-impl<All: Unsigned + FuntyPart + Step> const LinkType for All where
+impl<All: Unsigned + FuntyPart> LinkType for All where
     All: TryFrom<i8, Error: Debug>
         + TryFrom<u8, Error: Debug>
         + TryFrom<i16, Error: Debug>
