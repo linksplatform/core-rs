@@ -53,12 +53,24 @@ use platform_data::Flow;
 
 let mut collected = vec![];
 
+// Use Flow with try_for_each by converting to ControlFlow
 (0..20).try_for_each(|i| {
     collected.push(i);
-    if i == 10 { Flow::Break } else { Flow::Continue }
+    if i == 10 { Flow::Break.into_control_flow() } else { Flow::Continue.into_control_flow() }
 });
 
 assert_eq!(collected, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+// Or use Flow directly with manual iteration
+let mut collected2 = vec![];
+for i in 0..20 {
+    collected2.push(i);
+    let flow = if i == 10 { Flow::Break } else { Flow::Continue };
+    if flow.is_break() {
+        break;
+    }
+}
+assert_eq!(collected2, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 ```
 
 ### Using Point for repeated elements
@@ -144,17 +156,7 @@ use platform_data::{Links, LinkType, LinksConstants, Flow, Error, ReadHandler, W
 
 ## Requirements
 
-This crate requires the **nightly** Rust toolchain due to the use of unstable features:
-
-- `try_trait_v2`
-- `associated_type_bounds`
-- `type_alias_impl_trait`
-- `const_refs_to_cell`
-- `const_result_drop`
-- `const_trait_impl`
-- `const_convert`
-- `const_deref`
-- `step_trait`
+This crate requires **Rust 1.79 or later** (stable toolchain). The `associated_type_bounds` feature used for `Error:` bounds was stabilized in Rust 1.79.
 
 ## Dependencies
 

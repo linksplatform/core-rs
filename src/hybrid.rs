@@ -1,6 +1,4 @@
 use crate::LinkType;
-use funty::Integral;
-use std::ops::{Div, Sub};
 
 #[derive(Debug, Clone, Copy, Hash, PartialOrd, PartialEq, Ord, Eq)]
 pub struct Hybrid<T> {

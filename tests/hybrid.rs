@@ -76,7 +76,7 @@ fn test_hybrid_as_inner() {
 
 #[test]
 fn test_addr_to_raw_default() {
-    let converter = AddrToRaw::default();
+    let converter = AddrToRaw;
     let result = converter.convert(100usize);
     // convert creates an external hybrid and returns its inner value
     assert!(result > 0);
@@ -84,7 +84,7 @@ fn test_addr_to_raw_default() {
 
 #[test]
 fn test_raw_to_addr_default() {
-    let converter = RawToAddr::default();
+    let converter = RawToAddr;
     let result = converter.convert(100usize);
     // convert creates an external hybrid and returns its abs value
     assert!(result > 0);

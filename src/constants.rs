@@ -96,7 +96,7 @@ impl<T: LinkType> LinksConstants<T> {
     pub fn is_external(&self, address: T) -> bool {
         self.external_range
             .clone()
-            .map_or(false, |range| range.contains(&address))
+            .is_some_and(|range| range.contains(&address))
     }
 
     pub fn is_reference(&self, address: T) -> bool {

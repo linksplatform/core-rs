@@ -1,36 +1,37 @@
-#![feature(try_trait_v2)]
-
 use platform_data::Flow;
-use std::ops::{ControlFlow, FromResidual, Try};
+use std::ops::ControlFlow;
 
 #[test]
 fn basic() {
     let mut vec = vec![];
 
-    (0..20).try_for_each(|i| {
+    for i in 0..20 {
         vec.push(i);
-        if i == 10 { Flow::Break } else { Flow::Continue }
-    });
+        let flow = if i == 10 { Flow::Break } else { Flow::Continue };
+        if flow.is_break() {
+            break;
+        }
+    }
 
     assert_eq!(vec, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 }
 
 #[test]
-fn test_flow_continue() {
+fn test_flow_continue_with_control_flow() {
     let mut count = 0;
-    (0..5).try_for_each(|_| {
+    let _ = (0..5).try_for_each(|_| {
         count += 1;
-        Flow::Continue
+        Flow::Continue.into_control_flow()
     });
     assert_eq!(count, 5);
 }
 
 #[test]
-fn test_flow_break_early() {
+fn test_flow_break_early_with_control_flow() {
     let mut count = 0;
-    (0..100).try_for_each(|_| {
+    let _ = (0..100).try_for_each(|_| {
         count += 1;
-        Flow::Break
+        Flow::Break.into_control_flow()
     });
     assert_eq!(count, 1); // Should stop after first iteration
 }
@@ -40,16 +41,7 @@ fn test_from_control_flow_continue() {
     // Test conversion from ControlFlow::Continue
     let cf: ControlFlow<i32, ()> = ControlFlow::Continue(());
     let flow: Flow = cf.into();
-    // We can't directly compare Flow values, but we can verify the conversion happened
-    // by checking behavior - the flow should be Continue
-    let result = std::iter::once(0).try_for_each(|_| {
-        let cf2: ControlFlow<i32, ()> = ControlFlow::Continue(());
-        let _: Flow = cf2.into();
-        Flow::Continue
-    });
-    // Verify the result is ok (iterator completed)
-    let _ = result;
-    let _ = flow; // Use the flow variable
+    assert!(flow.is_continue());
 }
 
 #[test]
@@ -57,46 +49,90 @@ fn test_from_control_flow_break() {
     // Test conversion from ControlFlow::Break
     let cf: ControlFlow<(), i32> = ControlFlow::Break(());
     let flow: Flow = cf.into();
-    let _ = flow; // Use the flow variable
+    assert!(flow.is_break());
 
     // Verify Break behavior
     let mut count = 0;
-    (0..10).try_for_each(|_| {
+    let _ = (0..10).try_for_each(|_| {
         count += 1;
-        let cf2: ControlFlow<(), i32> = ControlFlow::Break(());
-        let f: Flow = cf2.into();
-        f
+        Flow::Break.into_control_flow()
     });
     assert_eq!(count, 1);
 }
 
 #[test]
-fn test_try_trait_from_output() {
-    // Test that Flow::from_output returns Continue
-    let flow = Flow::from_output(());
-    let _ = flow; // Use the flow variable
+fn from_control_flow() {
+    let continue_flow: Flow = ControlFlow::<(), ()>::Continue(()).into();
+    assert!(continue_flow.is_continue());
 
-    // Verify from_output behavior by testing in iteration
-    let mut count = 0;
-    std::iter::once(()).try_for_each(|_| {
-        count += 1;
-        Flow::from_output(())
-    });
-    assert_eq!(count, 1);
+    let break_flow: Flow = ControlFlow::<(), ()>::Break(()).into();
+    assert!(break_flow.is_break());
 }
 
 #[test]
-fn test_from_residual() {
-    // Test FromResidual implementation
-    let flow: Flow = Flow::from_residual(Flow::Break);
-    let _ = flow; // Use the flow variable
+fn into_control_flow() {
+    let cf: ControlFlow<()> = Flow::Continue.into();
+    assert!(matches!(cf, ControlFlow::Continue(())));
 
-    // Verify from_residual behavior
-    let mut count = 0;
-    (0..10).try_for_each(|_| {
-        count += 1;
-        Flow::from_residual(Flow::Break)
+    let cf: ControlFlow<()> = Flow::Break.into();
+    assert!(matches!(cf, ControlFlow::Break(())));
+}
+
+#[test]
+fn test_into_control_flow_method() {
+    // Test the into_control_flow() method
+    let continue_cf = Flow::Continue.into_control_flow();
+    assert!(matches!(continue_cf, ControlFlow::Continue(())));
+
+    let break_cf = Flow::Break.into_control_flow();
+    assert!(matches!(break_cf, ControlFlow::Break(())));
+}
+
+#[test]
+fn test_flow_with_iterator() {
+    // Test using Flow with iterators via into_control_flow
+    let mut collected = vec![];
+    let _ = (0..20).try_for_each(|i| {
+        collected.push(i);
+        if i == 10 {
+            Flow::Break.into_control_flow()
+        } else {
+            Flow::Continue.into_control_flow()
+        }
     });
-    // from_residual(Break) returns Break, so should stop after first
-    assert_eq!(count, 1);
+    assert_eq!(collected, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+}
+
+#[test]
+fn test_is_continue() {
+    assert!(Flow::Continue.is_continue());
+    assert!(!Flow::Break.is_continue());
+}
+
+#[test]
+fn test_is_break() {
+    assert!(Flow::Break.is_break());
+    assert!(!Flow::Continue.is_break());
+}
+
+#[test]
+fn test_flow_copy() {
+    let flow = Flow::Continue;
+    let copied1 = flow;
+    let copied2 = flow;
+    assert_eq!(flow, copied1);
+    assert_eq!(flow, copied2);
+}
+
+#[test]
+fn test_flow_eq() {
+    assert_eq!(Flow::Continue, Flow::Continue);
+    assert_eq!(Flow::Break, Flow::Break);
+    assert_ne!(Flow::Continue, Flow::Break);
+}
+
+#[test]
+fn test_flow_debug() {
+    assert_eq!(format!("{:?}", Flow::Continue), "Continue");
+    assert_eq!(format!("{:?}", Flow::Break), "Break");
 }
