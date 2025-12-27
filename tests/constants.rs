@@ -54,8 +54,7 @@ fn test_via_external_with_custom_target_part() {
 fn test_via_ranges_with_custom_ranges() {
     let internal = 1u64..=1000;
     let external = Some(1001u64..=2000);
-    let constants: LinksConstants<u64> =
-        LinksConstants::via_ranges(internal.clone(), external);
+    let constants: LinksConstants<u64> = LinksConstants::via_ranges(internal.clone(), external);
     assert_eq!(*constants.internal_range.start(), *internal.start());
     assert!(constants.external_range.is_some());
 }
